@@ -42,7 +42,7 @@ DESCRIPTION
         return false;
       }
 
-      See B<examples/demo.html> and B<scripts/p_gen.cgi>
+      See 'examples/demo.html' and 'scripts/p_gen.cgi'
       Read INSTALL
 
     make_page($path_to_images);

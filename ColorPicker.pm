@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 package Graphics::ColorPicker;
 
-# 8-13-02 
-# Copyright, all rights reserved
+# 8-15-02 
+# Copyright 2002
 # Michael Robinton & BizSystems. michael@bizsystems.com
 
 use strict;
@@ -12,7 +12,7 @@ use lib qw(./blib/lib);
 use vars qw($VERSION $msie_frame $colwidth $leftwidth $force_msie $obfuscate $server_only $use_mdown $image);
 use AutoLoader 'AUTOLOAD';
 
-$VERSION = do { my @r = (q$Revision: 0.05 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 0.07 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 ################################################
 # set some things, should not need to be changed
@@ -314,12 +314,16 @@ var mv;
 var px;
 var py;
 var pict;
-var sf = 1;
-var out ='sf = 1.2;';;
-function set1p2() {with(self){eval(out);}}
+var sf;
+var out = 1;
+function isOK() {
+  if ((eval(out) < 1.2) | . '||' . q| (navigator.userAgent.indexOf('Opera') != -1)) {
+    alert('Sorry, unsupported or flakey browser');
+  }
+}
 </script>
 <script language=javascript1.2>
-set1p2(); // have javascript 1.2 or better|;
+  out = 1.2 // have javascript 1.2 or better|;
 
   $head .= q|
 colorpluck = function(){pluckXY();if(px>blim&&py>blim){return(window._digits.flipc24m());}px-=mv;py=mv-py;scale();var g=Math.abs(px/2);var r=py+g;if(r<0)r=0;py=-py;var b=py-g;if(b<0)b=0;if(px<0){g=b-px;}else{g=b;b=g+px;}out = window._digits;out.rgb[0] = parseInt(r);out.rgb[1] = parseInt(g);out.rgb[2] = parseInt(b);if(window._picker.c24flip!=0){out.rgb[0] = 255 - out.rgb[0];out.rgb[1] = 255 - out.rgb[1];out.rgb[2] = 255 - out.rgb[2];}out.setrgb();out.sethex();}
@@ -342,16 +346,17 @@ $head .= q|
 <script language=javascript1.2 src=|. &script_name . q|?what=jslib></script>|
 	if $jsl && ! $obfuscate;
 
+  my $sc = 'no';	# scrolling -- normally no, yes for debug
   return $head . q|
 </head>
 <script language=javascript>
-if (sf == 1.2) {
-  document.writeln('<frameset cols="| . $leftwidth . q|,*" border=0 onLoad="window._digits.init();">');
-  document.writeln('  <frame name=_picker scrolling=no marginheight=0 marginwidth=0 src=|. $gen_name . q|?what=picker|. $jsl . q|>');
+if (out == 1.2) {
+  document.writeln('<frameset cols="| . $leftwidth . q|,*" border=0 onLoad="isOK();window._digits.init();">');
+  document.writeln('  <frame name=_picker scrolling=| . $sc . q| marginheight=0 marginwidth=0 src=|. $gen_name . q|?what=picker|. $jsl . q|>');
   document.writeln('  <frameset rows="0,85,*" border=0>');
-  document.writeln("  <frame name=_data scrolling=no marginheight=0 marginwidth=0 src='|. $gen_name . $hex . q|'>");
-  document.writeln("  <frame name=_sample scrolling=no marginheight=0 marginwidth=0 src='|. $_ . q|'>");
-  document.writeln('  <frame name=_digits scrolling=no marginheight=0 marginwidth=0 src=|. $gen_name . q|?what=digits|. $jsl . q|>');
+  document.writeln("  <frame name=_data scrolling=| . $sc . q| marginheight=0 marginwidth=0 src='|. $gen_name . $hex . q|'>");
+  document.writeln("  <frame name=_sample scrolling=| . $sc . q| marginheight=0 marginwidth=0 src='|. $_ . q|'>");
+  document.writeln('  <frame name=_digits scrolling=| . $sc . q| marginheight=0 marginwidth=0 src=|. $gen_name . q|?what=digits|. $jsl . q|>');
   document.writeln('  </frameset>');
   document.writeln('</frameset>');
 } else {
@@ -417,9 +422,8 @@ sub msie_frame {
     }
     strg = a;
   }
-  parent.out = strg;
-  with(top) {
-    top.set1p2();
+  with(parent) {
+    out = strg + "\nout = " + out + ";\n";
   }
 </script></html>|;
 }
@@ -460,10 +464,10 @@ sub picker {
   my ($fmie,$umd) = &_force_mdown;
   my $head = q|<html>
 <head>
-<STYLE TYPE="text/css">
+<style type="text/css">
   #cpi {position:absolute; top:| . $cy . q|; left:| . $cx . q|;}
   #gpi {position:absolute; top:| . $gy . q|; left:| . $gx . q|;}
-</STYLE>
+</style>
 <script language=javascript1.2>
 dcache = new Image();
 dcache.src = "| . $drkimg . q|";
@@ -483,7 +487,7 @@ function msie_wa(e,type) {
 }|;
 
   $head .= q|
-function getxy(e) {
+function getxy(e,cx,cy) {
   var x;
   var y;
   if (e.which == 1 | .'||'. q| e.button == 1) {
@@ -492,8 +496,8 @@ function getxy(e) {
     } else {
       x = e.pageX; y = e.pageY;
     }
-    x -= | . $cx . q|;
-    y -= | . $cy . q|;
+    x -= cx;
+    y -= cy;
     if (x < 0) { x = 0;}
     if (y < 0) { y = 0;}
     parent.px = x;
@@ -503,11 +507,11 @@ function getxy(e) {
   return false;
 }
 function cpxy(e) {
-  if (getxy(e)) { parent.colorpluck(true);}
+  if (getxy(e,| .$cx.','.$cy. q|)) { parent.colorpluck(true);}
   return false;
 }
 function gpxy(e) {
-  if (getxy(e)) { parent.greypluck(true);}
+  if (getxy(e,0,| .$gy. q|)) { parent.greypluck(true);}
   return false;
 }|
 	if $umd;
@@ -598,6 +602,8 @@ href=| . $gref . q|
 #
 sub cp216_ds {
   my ($clrimg,$border,$size) = @_;
+  $clrimg =~ m|([^/]+)$|;
+  my $updimg = $` . 'updown.gif';
   $border = 0 unless $border;
   $size = 9 unless $size;
   $size -= $border;
@@ -614,8 +620,8 @@ var hex;
 function init() {
   if (parent.doce == '') return false;
   if (parent.uno == '') parent.uno = parent.doce;
-  document.forms.rgb.hex.value = parent.doce;
-  hexclk();
+  self.document.forms.rgb.hex.value = parent.doce;
+  self.hexclk();
   return true;
 }
 function doSubmit() {
@@ -646,26 +652,32 @@ function flipc24m() {
 }
 function update() {
   parent.doce = hex;
-  out = parent._sample.document;
-  var t = '<font ';
-  var whitefont = t + ' color=white>';
-  var hexfont = t + ' color="#' + hex + '">';
-  var blackfont = t + ' color=black>';
-  t = '<td id="sam" width=|. ($colwidth-15) . q| bgcolor=';
-  var td_bgblack = t + 'black>';
-  var td_bghex = t + '"#' + hex + '">';
-  var td_bgwhite = t + 'white>';
-  var end = '';
-  end += '</font></td>';
-  out.writeln('<html><head><style type="text/css">#sam{font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;font-size: 16px;font-weight: bold;}</style></head><body bgcolor="#ffffff"><table cellspacing=5 cellpadding=5 border=0>');
-  out.writeln('<tr align=center valign=middle>');
-    out.writeln(td_bgwhite + hexfont + hex + end);
-    out.writeln(td_bghex + whitefont + hex + end + '</tr>');
-  out.writeln('<tr align=center valign=middle>');
-    out.writeln(td_bgblack + hexfont + hex + end);
-    out.writeln(td_bghex + blackfont + hex + end + '</tr>');
-  out.writeln('</table></body></html>');
-  out.close();
+  var me = parent._sample.document;
+  var t = '<font color=';
+  var whitefont = t + 'white>';
+  var hexfont = t + '"#' + hex + '">';
+  var blackfont = t + 'black>';
+  t = '<td width=|. ($colwidth-15) . q| id="';
+  var td_bgblack = t + 'dark">';
+  var td_bghex = t + 'clrd">';
+  var td_bgwhite = t + 'lite">';
+  var end = '</font></td>';
+  me.write('<html><head>'+"\n");
+  me.writeln('<style type="text/css">')
+  me.writeln('  #dark{background-color: black;font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;font-size: 16px;font-weight: bold;}');
+  me.writeln('  #lite{background-color: white;font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;font-size: 16px;font-weight: bold;}');
+  me.writeln('  #clrd{background-color: #' + hex + ';font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;font-size: 16px;font-weight: bold;}');
+  me.writeln('</style>');
+  me.writeln('</head>');
+  me.writeln('<body><table cellspacing=5 cellpadding=5 border=0>');
+  me.writeln('<tr align=center valign=middle>');
+    me.writeln(td_bgwhite + hexfont + hex + end);
+    me.writeln(td_bghex + whitefont + hex + end + '</tr>');
+  me.writeln('<tr align=center valign=middle>');
+    me.writeln(td_bgblack + hexfont + hex + end);
+    me.writeln(td_bghex + blackfont + hex + end + '</tr>');
+  me.writeln('</table></body></html>');
+  me.close();
   return true;
 }
 ishex = new RegExp("^([a-zA-Z0-9]{2})([a-zA-Z0-9]{2})([a-zA-Z0-9]{2})$");
@@ -729,7 +741,6 @@ function tohex(n) {
   return h;
 }
 function clrupd() {
-  top.status = "";
   document.forms.rgb.r.blur();
   document.forms.rgb.g.blur();
   document.forms.rgb.b.blur();
@@ -817,7 +828,7 @@ OnMouseOver="return(clrupd());">
 
 <form name=rgb action="javascript:void('');" method=post>
 <table cellspacing=0 cellpadding=0 border=0>
-<tr><td colspan=3 id="txt">&lt;=216 colors</td></tr>
+<tr><td colspan=3 id="txt">web colors</td></tr>
 <tr>
 <td>
 <a href="" OnClick="return false;" OnMouseOver="return(clrupd());"><img name=X|. $num++ . q| width=10 height=180 alt="" border=0></a></td>
@@ -829,15 +840,15 @@ OnMouseOver="return(clrupd());">
 <tr align=center>
   <td id="txt"><font color=red>RED</font><br>
   <input type=text name=r size=3 OnChange="newco(0,0);"></td>
-  <td id="txt">&nbsp;<br><img src="updown.gif" width=16 height=16 border=1 alt="" usemap="#RED"></td></tr>
+  <td id="txt">&nbsp;<br><img src="| . $updimg . q|" width=16 height=16 border=1 alt="" usemap="#RED"></td></tr>
 <tr align=center>
   <td id="txt"><font color=green>GREEN</font><br>
   <input type=text name=g size=3 OnChange="newco(0,1);"></td>
-  <td id="txt">&nbsp;<br><img src="updown.gif" width=16 height=16 border=1 alt="" usemap="#GREEN"></td></tr>
+  <td id="txt">&nbsp;<br><img src="| . $updimg . q|" width=16 height=16 border=1 alt="" usemap="#GREEN"></td></tr>
 <tr align=center>
   <td id="txt"><font color=blue>BLUE</font><br>
   <input type=text name=b size=3 OnChange="newco(0,2);"></td>
-  <td id="txt">&nbsp;<br><img src="updown.gif" width=16 height=16 border=1 alt="" usemap="#BLUE"></td></tr>
+  <td id="txt">&nbsp;<br><img src="| . $updimg . q|" width=16 height=16 border=1 alt="" usemap="#BLUE"></td></tr>
 <tr align=center><td colspan=2 id="txt">hex color<br>
   <input type=text name=hex size=6 OnChange="hexclk();"></td></tr>
 <tr><td colspan=2>
@@ -895,12 +906,15 @@ OnMouseOver="return(clrupd());">
 </table>
 |;
 
+# use on click as workaround for buggy Opera browser.
   my $butable = [
-	'Submit'	=> 'javascript:void doSubmit();',
+#	'Submit'	=> 'javascript:void doSubmit();',
+	'Submit'	=> 'javascript:void(0);" OnMouseDown="doSubmit();return false;',
 	'','',
-	'Restore'	=> 'javascript:void doRestore();',
+#	'Restore'	=> 'javascript:void doRestore();',
+	'Restore'	=> 'javascript:void(0);" OnClick="doRestore();return false;',
 	'','',
-	'Close'		=> 'javascript:void (0);" OnClick="top.close();return false;',
+	'Close'		=> 'javascript:void (0);" OnClick="parent.close();return false;',
   ];
 
   return $head . q|<body bgcolor="#ffffff" OnLoad="populate(| . $num . q|);">

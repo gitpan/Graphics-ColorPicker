@@ -1,20 +1,17 @@
 <html>
+<!-- version 1.02 8-15-02 -->
 <head>
 <title>Color Picker</title>
-<script language=javascript1.1>
+<script language=javascript1.2>
 var colorhex = 'none';
 function pop() {
-  var colorwin = open("","picker",
+  var colorwin = open("","colorpicker",
   "width=630,height=440,status=no,directories=no," +
   "location=no,menubar=no,scrollbars=no,toolbar=no");
   if (colorwin.opener == null) newin.opener = self;
   colorwin.document.close();
   colorwin.focus();
-  colorwin.location.href = './p_gen.cgi' +
-// the next line supplies the initial color
-// value to the picker and may be omitted
-  '?hex=' + document.forms.color.hex.value;
-  return false;
+  return true;
 }
 
 function show() { 
@@ -23,10 +20,18 @@ function show() {
   return false;
 }
 </script>
+<style type="text/css">
+  pre {
+    color: black;
+    font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;
+    font-size: 12px;
+  }
+</style>
 </head>
 <body bgcolor="#ffffff">
 <center>
-<form name=color action="#top" onSubmit="return(pop());">
+<form name="color" onSubmit="return(pop());"
+ action="p_gen.cgi" target="colorpicker">
 <font size=2>
 Enter initial color<br>
 i.e. FA23DB<br></font>
@@ -39,23 +44,25 @@ i.e. FA23DB<br></font>
 <font size=+1><b>Sample Code</b></font>
 </center>
 <blockquote><pre>
-&lt;script language=javascript1.1&gt;
+&lt;script language=javascript1.2&gt;
 // return value will be here
 var colorhex = '';
 function pop() {
-  var colorwin = open("","picker",
+  var colorwin = open("","colorpicker",
   "width=630,height=440,status=no,directories=no," +
   "location=no,menubar=no,scrollbars=no,toolbar=no");
-  if (colorwin.opener == null) newin.opener = self;
+  if (colorwin.opener == null) newin.opener = self;  
   colorwin.document.close();
   colorwin.focus();
-  colorwin.location.href = './p_gen.cgi' +
-// the next line supplies the initial color
-// value to the picker and may be omitted
-  '?hex=' + document.forms.color.hex.value;
-  return false;
+  return true;
 }
 &lt;/script&gt;
+&lt;body&gt;
+&lt;form name="color" onSubmit="return(pop());"
+ action="p_gen.cgi" target="colorpicker"&gt;
+&lt;input type=text name=hex size=10&gt;&lt;br&gt;
+&lt;input type=submit value="Pop Picker Window"&gt;
+&lt;/form&gt;
 </pre></blockquote>
 </body>
 </html>

@@ -6,6 +6,7 @@ Makefile.PL
 MANIFEST
 README
 ColorPicker.pm
+test.pl
 examples/demo.html
 images/cleardot.gif
 images/darkb.jpg
