@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package Graphics::ColorPicker;
 
-# 8-15-02 
+# 8-17-02 
 # Copyright 2002
 # Michael Robinton & BizSystems. michael@bizsystems.com
 
@@ -12,7 +12,7 @@ use lib qw(./blib/lib);
 use vars qw($VERSION $msie_frame $colwidth $leftwidth $force_msie $obfuscate $server_only $use_mdown $image);
 use AutoLoader 'AUTOLOAD';
 
-$VERSION = do { my @r = (q$Revision: 0.07 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 0.08 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 ################################################
 # set some things, should not need to be changed
@@ -94,23 +94,30 @@ sub _force_mdown {
 This module generates a set of palettes to select a HEX or DECIMAL color
 number via a web browser. B<make_page()> can be called by C<javascript> from
 your web page and will set the HEX value in a variable in the calling page
-and scope.
+and scope. The selector page can be created for 24 million or web safe
+colors only.
 
   <script language=javascript1.1>
-  var colorhex = 'none';
+  var colorhex = '';
+  var w;
   function pop() {
-    var colorwin = open("","picker",
-    "width=630,height=440,status=no,directories=no," +
+    if (document.forms.color.what.checked){w=180;}else{w=630;}
+    var colorwin = open("","colorpicker",
+    "width=" + w + ",height=440,status=no,directories=no," +
     "location=no,menubar=no,scrollbars=no,toolbar=no");
-    if (colorwin.opener == null) newin.opener = self;
+    if (colorwin.opener == null) newin.opener = self;  
     colorwin.document.close();
     colorwin.focus();
-    colorwin.location.href = './p_gen.cgi' +
-  // the next line supplies the initial color
-  // value to the picker and may be omitted
-    '?hex = ' + document.forms.color.hex.value;
-    return false;
+    return true;
   }
+  </script>
+  <body>
+  <form name="color" onSubmit="return(pop());"
+   action="p_gen.cgi" target="colorpicker">   
+  <input type=text name=hex size=10><br>
+  <input type=checkbox name=what value=wo> web safe colors only<br>
+  <input type=submit value="Pop Picker Window">
+  </form>
 
   See B<examples/demo.html> and B<scripts/p_gen.cgi>
   Read INSTALL
@@ -135,10 +142,13 @@ sub make_page {
   my ($dir) = @_;
   my ($x,$y,$html,$scale,$type);
 
-  if (	$ENV{QUERY_STRING} =~ /what=picker/) {	# color picker page
+  if (	$ENV{QUERY_STRING} =~ /what=picker/) {		# color picker page
 	$html = &picker($dir.$darkimg,$dir.$liteimg,$size,$button,$dir.$greyimg);
   }
-  elsif ($ENV{QUERY_STRING} =~ /what=digits/) {	# digits page
+  elsif ($ENV{QUERY_STRING} =~ /what=no_picker/) {	# blank minimum color picker page
+	$html = &no_picker;
+  }
+  elsif ($ENV{QUERY_STRING} =~ /what=digits/) {		# digits page
 	 $html = &cp216_ds($dir.'cleardot.gif');
   }
 # accomodate dumb browsers that don't understand all of javascript1.1
@@ -162,8 +172,11 @@ sub make_page {
 	 $html = &jslib;
 	 $type = 'application/x-javascript';
   }
-  else {	# call frames(1) for browser based xy resolution (netscape, mostly)
-	 $html = &frames;
+  elsif ($ENV{QUERY_STRING} =~ /what=wo/) {	# frames for web safe colors only
+	 $html = &frames(1);
+  }
+  else {	# call frames for browser based xy resolution, 24 megacolors
+	 $html = &frames(0);
   }
   &send_page(\$html,$type);
 }
@@ -268,6 +281,7 @@ sub script_name {
 sub frames;
 sub msie_frame;
 sub picker;
+sub no_picker;
 sub cp216_ds;
 sub jslib;
 sub j2s;
@@ -295,10 +309,11 @@ __END__
 ################################################
 # return new frames page
 #
-# input:	use xy javascript library, true/false
+# input:	false = 24 million colors, true = web safe
 # returns:	top window html frames text
 #
 sub frames {
+  my ($websafe) = @_;
   my $jsl = ($server_only) ? '' : '&jsl=1';
   my $hex = ($ENV{QUERY_STRING} =~ /hex=[\#]*([0-9a-fA-F]{6})/)
 	? "?what=init&hex=$1" : '?what=init';
@@ -346,13 +361,18 @@ $head .= q|
 <script language=javascript1.2 src=|. &script_name . q|?what=jslib></script>|
 	if $jsl && ! $obfuscate;
 
+  my $what = 'picker';
+  if ( $websafe ) {
+    $what = 'no_picker';
+    $leftwidth = 0;
+  }
   my $sc = 'no';	# scrolling -- normally no, yes for debug
   return $head . q|
 </head>
 <script language=javascript>
 if (out == 1.2) {
   document.writeln('<frameset cols="| . $leftwidth . q|,*" border=0 onLoad="isOK();window._digits.init();">');
-  document.writeln('  <frame name=_picker scrolling=| . $sc . q| marginheight=0 marginwidth=0 src=|. $gen_name . q|?what=picker|. $jsl . q|>');
+  document.writeln('  <frame name=_picker scrolling=| . $sc . q| marginheight=0 marginwidth=0 src=|. $gen_name . q|?what=|. $what . $jsl . q|>');
   document.writeln('  <frameset rows="0,85,*" border=0>');
   document.writeln("  <frame name=_data scrolling=| . $sc . q| marginheight=0 marginwidth=0 src='|. $gen_name . $hex . q|'>");
   document.writeln("  <frame name=_sample scrolling=| . $sc . q| marginheight=0 marginwidth=0 src='|. $_ . q|'>");
@@ -579,6 +599,28 @@ href=| . $gref . q|
 </html>
 |;
 } # end picker page
+
+=item $html_text=no_picker;
+
+  Returns minimum contents for a blank 24 million
+  color page when only "Web Only" colors are called
+
+=cut
+
+sub no_picker {
+  return q
+|<html>
+<head>
+<script language=javascript>
+var c24flip = 0;
+</script>
+</head>
+<body>
+This frame is empty
+</body>
+</head>
+|;
+}
 
 =item $html_text=cp216_ds($clrdot,$border,$square)
 

@@ -1,5 +1,9 @@
 Revision history for Perl extension Graphics::ColorPicker
 
+0.08  Sat Aug 17 11:59:19 PDT 2002
+	add function "no_picker" to allow selection of pop up
+	windows with 24 million or web safe colors only
+
 0.07  Thu Aug 15 09:58:41 PDT 2002
 	Change "demo.html" javascript to accomodate
 	certain buggy?? versions of Mozilla 1.0
