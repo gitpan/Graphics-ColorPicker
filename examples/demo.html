@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>Color Picker</title>
+<script language=javascript1.1>
+var colorhex = 'none';
+function pop() {
+  var colorwin = open("","picker",
+  "width=630,height=440,status=no,directories=no," +
+  "location=no,menubar=no,scrollbars=no,toolbar=no");
+  if (colorwin.opener == null) newin.opener = self;
+  colorwin.document.close();
+  colorwin.focus();
+  colorwin.location.href = './p_gen.cgi' +
+// the next line supplies the initial color
+// value to the picker and may be omitted
+  '?hex=' + document.forms.color.hex.value;
+  return false;
+}
+
+function show() { 
+  document.forms.color.hex.value = colorhex;
+  alert(colorhex);
+  return false;
+}
+</script>
+</head>
+<body bgcolor="#ffffff">
+<center>
+<form name=color action="#top" onSubmit="return(pop());">
+<font size=2>
+Enter initial color<br>
+i.e. FA23DB<br></font>
+<input type=text name=hex size=10>
+<br>
+<input type=submit value="Pop Picker Window">
+</form>
+<a href="#top" onClick="return(show());">Show Returned VALUE</a>
+<p>
+<font size=+1><b>Sample Code</b></font>
+</center>
+<blockquote><pre>
+&lt;script language=javascript1.1&gt;
+// return value will be here
+var colorhex = '';
+function pop() {
+  var colorwin = open("","picker",
+  "width=630,height=440,status=no,directories=no," +
+  "location=no,menubar=no,scrollbars=no,toolbar=no");
+  if (colorwin.opener == null) newin.opener = self;
+  colorwin.document.close();
+  colorwin.focus();
+  colorwin.location.href = './p_gen.cgi' +
+// the next line supplies the initial color
+// value to the picker and may be omitted
+  '?hex=' + document.forms.color.hex.value;
+  return false;
+}
+&lt;/script&gt;
+</pre></blockquote>
+</body>
+</html>

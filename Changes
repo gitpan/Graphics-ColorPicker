@@ -1,0 +1,21 @@
+Revision history for Perl extension Graphics::ColorPicker
+
+0.05  Tue Aug 13 18:40:35 PDT 2002
+	rename module ColorPicker
+
+0.04  Mon Aug 12 20:56:17 PDT 2002
+	Add univeral XY resolution using MOUSEDOWN
+	Revise rev 0.03 to use universal XY for GECKO
+	Add styles for uniform font rendering in most browsers
+
+0.03  Thu Aug  8 17:50:22 PDT 2002
+	add GECKO to the dumb browser list with MSIE
+
+0.02  Wed Jun  5 11:52:42 PDT 2002
+	change window names "picker,data,sample,digits"
+	to "_picker,_data,_sample,_digits"
+
+	correct reference to 'opener' in doSubmit()
+
+0.01  Mon Jun  3 14:16:30 PDT 2002
+	initial release
