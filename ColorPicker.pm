@@ -12,7 +12,7 @@ use lib qw(./blib/lib);
 use vars qw($VERSION $msie_frame $colwidth $leftwidth $force_msie $obfuscate $server_only $use_mdown $image);
 use AutoLoader 'AUTOLOAD';
 
-$VERSION = do { my @r = (q$Revision: 0.08 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 0.09 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 ################################################
 # set some things, should not need to be changed
@@ -80,9 +80,10 @@ sub _force_mdown {
   send_page(\$html_txt,$type);
   $time_string = http_date($time);
   $name = script_name;
-  $html_text=frames($use_js);
+  $html_text=frames($websafe);
   $html_text = msie_frame;
   $html_text=picker($darkimg,$liteimg,$size,$bsize,greyimg);
+  $html_text=no_picker;
   $html_text=cp216_ds($clrdot,$border,$square)
   $javascript_text = jslib;
   $html=make_buttons(\%look_n_feel,$url,$active,\@buttons,$xtra);
@@ -294,13 +295,12 @@ sub DESTROY {};
 1;
 __END__
 
-=item $html_text=frames($use_js);
+=item $html_text=frames($websafe);
 
   Returns the frame text for top window.
 
-  input:   $use_js	# true/false
-	#  have the browser use javascript
-	#  to resolve x,y to color numbers
+  input:  true = 24 million colors
+	  false = web safe colors only
 
   return:  html text for page
 
@@ -711,7 +711,7 @@ function update() {
   me.writeln('  #clrd{background-color: #' + hex + ';font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;font-size: 16px;font-weight: bold;}');
   me.writeln('</style>');
   me.writeln('</head>');
-  me.writeln('<body><table cellspacing=5 cellpadding=5 border=0>');
+  me.writeln('<body bgcolor="#ffffff"><table cellspacing=5 cellpadding=5 border=0>');
   me.writeln('<tr align=center valign=middle>');
     me.writeln(td_bgwhite + hexfont + hex + end);
     me.writeln(td_bghex + whitefont + hex + end + '</tr>');
@@ -963,9 +963,9 @@ OnMouseOver="return(clrupd());">
 <table cellspacing=0 cellpadding=0 border=0>
 <tr align=center valign=middle>
   <td width=|. $colwidth . q|>|. $colortab . q|</td>
-  <td width=|. $colwidth . q|>|. $digitbox . q|
-<p>
-| . &make_buttons('#0000cc',60,$butable) . q|
+  <td width=|. $colwidth . q|>|. $digitbox .
+&make_buttons('#0000cc',60,$butable) . qq|
+<font id="txt">$VERSION</font>
 </td></tr>
 </table>
 </body>

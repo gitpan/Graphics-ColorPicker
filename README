@@ -8,49 +8,45 @@ SYNOPSIS
       require  Graphics::ColorPicker;
 
       make_page($path_to_images);
-      send_page(\$html_txt,$type);
-      $time_string = http_date($time);
-      $name = script_name;
-      $html_text=frames($use_js);
-      $html_text = msie_frame;
-      $html_text=picker($darkimg,$liteimg,$size,$bsize,greyimg);
-      $html_text=cp216_ds($clrdot,$border,$square)
-      $javascript_text = jslib;
-      $html=make_buttons(\%look_n_feel,$url,$active,\@buttons,$xtra);
-      $html_text=pluck($color);
-      $html_text=hex_update($hex_color);
 
 DESCRIPTION
     This module generates a set of palettes to select a HEX or DECIMAL color
     number via a web browser. make_page() can be called by "javascript" from
     your web page and will set the HEX value in a variable in the calling
-    page and scope.
+    page and scope. The selector page can be created for 24 million or web
+    safe colors only.
 
       <script language=javascript1.1>
-      var colorhex = 'none';
+      var colorhex = '';
+      var w;
       function pop() {
-        var colorwin = open("","picker",
-        "width=630,height=440,status=no,directories=no," +
+        if (document.forms.color.what.checked){w=180;}else{w=630;}
+        var colorwin = open("","colorpicker",
+        "width=" + w + ",height=440,status=no,directories=no," +
         "location=no,menubar=no,scrollbars=no,toolbar=no");
-        if (colorwin.opener == null) newin.opener = self;
+        if (colorwin.opener == null) newin.opener = self;  
         colorwin.document.close();
         colorwin.focus();
-        colorwin.location.href = './p_gen.cgi' +
-      // the next line supplies the initial color
-      // value to the picker and may be omitted
-        '?hex = ' + document.forms.color.hex.value;
-        return false;
+        return true;
       }
+      </script>
+      <body>
+      <form name="color" onSubmit="return(pop());"
+       action="p_gen.cgi" target="colorpicker">   
+      <input type=text name=hex size=10><br>
+      <input type=checkbox name=what value=wo> web safe colors only<br>
+      <input type=submit value="Pop Picker Window">
+      </form>
 
-      See 'examples/demo.html' and 'scripts/p_gen.cgi'
+      See B<examples/demo.html> and B<scripts/p_gen.cgi>
       Read INSTALL
 
     make_page($path_to_images);
           Generate Color Picker Pages
 
           This is the only routine that really needs to be called
-          externally. You could roll your own from the subroutine
-          calls described in the man page but it's really not necessary.
+          externally. You could roll your own from the other functions
+          described in the man page, but it's really not necessary.
 
           i.e. Graphics::ColorPicker::make_page('./');
 
@@ -83,3 +79,4 @@ COPYRIGHT and LICENSE
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+

@@ -1,5 +1,11 @@
 Revision history for Perl extension Graphics::ColorPicker
 
+0.09  Sat Aug 17 12:08:47 PDT 2002
+	Update README file and pod docs.
+	Restore "show" frame background = white
+	removed for "Opera" development.
+	Add version number to pop window.
+
 0.08  Sat Aug 17 11:59:19 PDT 2002
 	add function "no_picker" to allow selection of pop up
 	windows with 24 million or web safe colors only
