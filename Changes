@@ -1,5 +1,8 @@
 Revision history for Perl extension Graphics::ColorPicker
 
+0.10  Mon Aug 26 15:22:31 PDT 2002
+	add "!important" to style font settings
+
 0.09  Sat Aug 17 12:08:47 PDT 2002
 	Update README file and pod docs.
 	Restore "show" frame background = white

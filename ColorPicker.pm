@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 package Graphics::ColorPicker;
 
-# 8-17-02 
+# 8-26-02 
 # Copyright 2002
 # Michael Robinton & BizSystems. michael@bizsystems.com
 
@@ -12,7 +12,7 @@ use lib qw(./blib/lib);
 use vars qw($VERSION $msie_frame $colwidth $leftwidth $force_msie $obfuscate $server_only $use_mdown $image);
 use AutoLoader 'AUTOLOAD';
 
-$VERSION = do { my @r = (q$Revision: 0.09 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 0.10 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 ################################################
 # set some things, should not need to be changed
@@ -706,9 +706,9 @@ function update() {
   var end = '</font></td>';
   me.write('<html><head>'+"\n");
   me.writeln('<style type="text/css">')
-  me.writeln('  #dark{background-color: black;font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;font-size: 16px;font-weight: bold;}');
-  me.writeln('  #lite{background-color: white;font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;font-size: 16px;font-weight: bold;}');
-  me.writeln('  #clrd{background-color: #' + hex + ';font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;font-size: 16px;font-weight: bold;}');
+  me.writeln('  #dark{background-color: black;font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;font-size: 16px !important;font-weight: bold;}');
+  me.writeln('  #lite{background-color: white;font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;font-size: 16px !important;font-weight: bold;}');
+  me.writeln('  #clrd{background-color: #' + hex + ';font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;font-size: 16px !important;font-weight: bold;}');
   me.writeln('</style>');
   me.writeln('</head>');
   me.writeln('<body bgcolor="#ffffff"><table cellspacing=5 cellpadding=5 border=0>');
@@ -812,13 +812,13 @@ A.NU {
   color: #ffffcc;
   background: transparent;
   font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;
-  font-size: 12px;
+  font-size: 12px !important;
   font-weight: bold;
   text-decoration: none;
 }
 #txt {
   font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;
-  font-size: 10px;  
+  font-size: 10px !important;  
 }
 </style>
 </head>
@@ -1121,7 +1121,7 @@ sub j2s {
                   color: red; // #ff0000
                   background: transparent;
                   font-family: VERDANA,ARIAL,HELVETICA,SAN-SERIF;
-		  font-size:  12px;
+		  font-size:  12px !important;
                   font-weight: bold;
                   text-decoration: none;
                 }
