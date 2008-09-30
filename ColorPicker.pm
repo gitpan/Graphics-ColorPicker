@@ -1,10 +1,6 @@
 #!/usr/bin/perl
 package Graphics::ColorPicker;
 
-# 8-26-02 
-# Copyright 2002
-# Michael Robinton & BizSystems. michael@bizsystems.com
-
 use strict;
 #use diagnostics;
 
@@ -12,7 +8,7 @@ use lib qw(./blib/lib);
 use vars qw($VERSION $msie_frame $colwidth $leftwidth $force_msie $obfuscate $server_only $use_mdown $image);
 use AutoLoader 'AUTOLOAD';
 
-$VERSION = do { my @r = (q$Revision: 0.10 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 0.11 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 ################################################
 # set some things, should not need to be changed
@@ -45,7 +41,7 @@ $VERSION = do { my @r = (q$Revision: 0.10 $ =~ /\d+/g); sprintf "%d."."%02d" x $
 ################################################
 
   $_ = $colwidth << 1;
-  $msie_frame = '<html><body bgcolor=white><table border=0 width=' . $_ . '><tr><td align=center><font color=blue><font size=5>ColorPicker</font><font size=-4><br>&copy; 2002 Michael Robinton<br><font color=red>loading, please wait</font></font></font></td></tr></table></body>';
+  $msie_frame = '<html><body bgcolor=white><table border=0 width=' . $_ . '><tr><td align=center><font color=blue><font size=5>ColorPicker</font><font size=-4><br>&copy; 2002-'. ((localtime())[5] + 1900). ' Michael Robinton<br><font color=red>loading, please wait</font></font></font></td></tr></table></body>';
 
   if ($server_only) {
     $obfuscate	= 0;
@@ -89,6 +85,10 @@ sub _force_mdown {
   $html=make_buttons(\%look_n_feel,$url,$active,\@buttons,$xtra);
   $html_text=pluck($color);
   $html_text=hex_update($hex_color);
+
+=head1 SAMPLE WEBSITE - 24 million color picker
+
+=head2 L<http://www.bizsystems.net/downloads/graphics/demo.html>
 
 =head1 DESCRIPTION
 
@@ -1244,7 +1244,7 @@ Michael Robinton, michael@bizsystems.com
 
 =head1 COPYRIGHT and LICENSE
 
-  Copyright 2002 Michael Robinton, BizSystems.
+  Copyright 2002 - 2008 Michael Robinton, BizSystems.
 
 This module is free software; you can redistribute it and/or modify it
 under the terms of either:

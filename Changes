@@ -1,5 +1,9 @@
 Revision history for Perl extension Graphics::ColorPicker
 
+0.11  Tue Sep 30 14:39:07 PDT 2008
+	add link in documentation to operational demo
+	add current year to dynamic copyright statement
+
 0.10  Mon Aug 26 15:22:31 PDT 2002
 	add "!important" to style font settings
 
