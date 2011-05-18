@@ -8,7 +8,7 @@ use lib qw(./blib/lib);
 use vars qw($VERSION $msie_frame $colwidth $leftwidth $force_msie $obfuscate $server_only $use_mdown $image);
 use AutoLoader 'AUTOLOAD';
 
-$VERSION = do { my @r = (q$Revision: 0.11 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 0.12 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 ################################################
 # set some things, should not need to be changed
@@ -725,9 +725,9 @@ function update() {
 ishex = new RegExp("^([a-zA-Z0-9]{2})([a-zA-Z0-9]{2})([a-zA-Z0-9]{2})$");
 function ckhex(s) {
   if ( s.match(ishex) ) {
-    rgb[0] = eval('0x' + s.charAt(0) + s.charAt(1)); // r
-    rgb[1] = eval('0x' + s.charAt(2) + s.charAt(3)); // g
-    rgb[2] = eval('0x' + s.charAt(4) + s.charAt(5)); // b
+    rgb[0] = parseInt(s.slice(0,2), 16); // r
+    rgb[1] = parseInt(s.slice(2,4), 16); // g
+    rgb[2] = parseInt(s.slice(4,6), 16); // b
     return true;
   } else {
     alert(s + "\nmust be 6 RGB elements\nhexadecimal a-zA-Z0-9" );

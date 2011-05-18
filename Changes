@@ -1,5 +1,10 @@
 Revision history for Perl extension Graphics::ColorPicker
 
+0.12  Wed May 18 15:13:24 PDT 2011
+	change javascript eval(stuff) to parseInt(....)
+
+	Thanks to spoon.reloaded@gmail.com for the code improvement
+
 0.11  Tue Sep 30 14:39:07 PDT 2008
 	add link in documentation to operational demo
 	add current year to dynamic copyright statement
