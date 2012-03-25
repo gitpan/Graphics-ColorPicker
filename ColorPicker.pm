@@ -8,7 +8,7 @@ use lib qw(./blib/lib);
 use vars qw($VERSION $msie_frame $colwidth $leftwidth $force_msie $obfuscate $server_only $use_mdown $image);
 use AutoLoader 'AUTOLOAD';
 
-$VERSION = do { my @r = (q$Revision: 0.13 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 0.14 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 ################################################
 # set some things, should not need to be changed
@@ -88,6 +88,8 @@ sub _force_mdown {
   $html_text=hex_update($hex_color);
 
 =head1 SAMPLE WEBSITE - 24 million color picker
+
+=head2 L<http://www.bizsystems.net/downloads/graphics/demo2.html>
 
 =head2 L<http://www.bizsystems.net/downloads/graphics/demo.html>
 

@@ -23,6 +23,8 @@ SYNOPSIS
       $html_text=hex_update($hex_color);
 
 SAMPLE WEBSITE - 24 million color picker
+  http://www.bizsystems.net/downloads/graphics/demo2.html
+
   http://www.bizsystems.net/downloads/graphics/demo.html
 
 DESCRIPTION

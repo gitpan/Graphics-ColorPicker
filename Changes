@@ -1,5 +1,8 @@
 Revision history for Perl extension Graphics::ColorPicker
 
+0.14  Sun Mar 25 14:14:39 PDT 2012
+	add demo2.html link to documentation
+
 0.13  Sun Mar 25 13:04:06 PDT 2012
 	add call back hook for color "update" function to
 	allow frame embedded use of Color Picker
