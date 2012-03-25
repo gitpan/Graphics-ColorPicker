@@ -8,7 +8,7 @@ use lib qw(./blib/lib);
 use vars qw($VERSION $msie_frame $colwidth $leftwidth $force_msie $obfuscate $server_only $use_mdown $image);
 use AutoLoader 'AUTOLOAD';
 
-$VERSION = do { my @r = (q$Revision: 0.12 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 0.13 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 ################################################
 # set some things, should not need to be changed
@@ -76,6 +76,7 @@ sub _force_mdown {
   send_page(\$html_txt,$type);
   $time_string = http_date($time);
   $name = script_name;
+  $butabref = buttontext([optional array ref])
   $html_text=frames($websafe);
   $html_text = msie_frame;
   $html_text=picker($darkimg,$liteimg,$size,$bsize,greyimg);
@@ -122,6 +123,13 @@ colors only.
 
   See B<examples/demo.html> and B<scripts/p_gen.cgi>
   Read INSTALL
+
+NOTE: as of version 0.13 ColorPicker can be used in a captive frame to
+dynamically update color values in the DOM.
+
+  See B<examples/demo2.html>, 
+      B<examples/colorbar.html> and
+      B<scripts/p_gen2.cgi>
 
 =over 4
 
@@ -277,6 +285,43 @@ sub script_name {
   }
 }
 
+=item $but_table_ref = buttontext([optional ref]);
+
+  Always return and optionally set the contents of cp216_ds button text.
+
+    input:	optional reference to button table array
+    returns:	reference to button table array
+
+  Default contents:
+
+  my $butable = [
+    'Submit'   => 'javascript:void(0);" OnMouseDown="doSubmit();return false;',
+    '','',
+    'Restore'  => 'javascript:void(0);" OnClick="doRestore();return false;',
+    '','',
+    'Close'    => 'javascript:void (0);" OnClick="parent.close();return false;',
+  ];
+
+=cut
+
+# use on click as workaround for buggy Opera browser.
+my $_butab = [
+#	'Submit'	=> 'javascript:void doSubmit();',
+	'Submit'	=> 'javascript:void(0);" OnMouseDown="doSubmit();return false;',
+	'','',
+#	'Restore'	=> 'javascript:void doRestore();',
+	'Restore'	=> 'javascript:void(0);" OnClick="doRestore();return false;',
+	'','',
+	'Close'		=> 'javascript:void (0);" OnClick="parent.close();return false;',
+];
+
+sub buttontext {
+  if (@_) {
+    $_butab = $_[0];	# set new button table values
+  }
+  $_butab;		# always return the reference
+}
+
 # define autoload subroutines
 
 sub frames;
@@ -348,6 +393,7 @@ scale = function(){px*=sf;py*=sf;}|
 	if $obfuscate;
 
 $head .= q|
+  if(typeof parent.registerpicker == 'function') parent.registerpicker(self);
 </script>
 |;
 
@@ -720,6 +766,8 @@ function update() {
     me.writeln(td_bghex + blackfont + hex + end + '</tr>');
   me.writeln('</table></body></html>');
   me.close();
+  if (typeof top.update_hook == 'function')
+    top.update_hook(self);
   return true;
 }
 ishex = new RegExp("^([a-zA-Z0-9]{2})([a-zA-Z0-9]{2})([a-zA-Z0-9]{2})$");
@@ -948,17 +996,7 @@ OnMouseOver="return(clrupd());">
 </table>
 |;
 
-# use on click as workaround for buggy Opera browser.
-  my $butable = [
-#	'Submit'	=> 'javascript:void doSubmit();',
-	'Submit'	=> 'javascript:void(0);" OnMouseDown="doSubmit();return false;',
-	'','',
-#	'Restore'	=> 'javascript:void doRestore();',
-	'Restore'	=> 'javascript:void(0);" OnClick="doRestore();return false;',
-	'','',
-	'Close'		=> 'javascript:void (0);" OnClick="parent.close();return false;',
-  ];
-
+  my $butable = buttontext();
   return $head . q|<body bgcolor="#ffffff" OnLoad="populate(| . $num . q|);">
 <table cellspacing=0 cellpadding=0 border=0>
 <tr align=center valign=middle>

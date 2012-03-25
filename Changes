@@ -1,5 +1,9 @@
 Revision history for Perl extension Graphics::ColorPicker
 
+0.13  Sun Mar 25 13:04:06 PDT 2012
+	add call back hook for color "update" function to
+	allow frame embedded use of Color Picker
+
 0.12  Wed May 18 15:13:24 PDT 2011
 	change javascript eval(stuff) to parseInt(....)
 
