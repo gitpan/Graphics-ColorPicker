@@ -1,5 +1,13 @@
 Revision history for Perl extension Graphics::ColorPicker
 
+0.17  Sun Jun  3 12:20:40 PDT 2012
+	add missing <head> to right picker frame
+
+0.16  Fri May  4 15:59:20 PDT 2012
+
+0.15  Wed Mar 28 21:48:28 PDT 2012
+	fix html typo
+
 0.14  Sun Mar 25 14:14:39 PDT 2012
 	add demo2.html link to documentation
 

@@ -8,7 +8,7 @@ use lib qw(./blib/lib);
 use vars qw($VERSION $msie_frame $colwidth $leftwidth $force_msie $obfuscate $server_only $use_mdown $image);
 use AutoLoader 'AUTOLOAD';
 
-$VERSION = do { my @r = (q$Revision: 0.14 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
+$VERSION = do { my @r = (q$Revision: 0.17 $ =~ /\d+/g); sprintf "%d."."%02d" x $#r, @r };
 
 ################################################
 # set some things, should not need to be changed
@@ -419,14 +419,14 @@ $head .= q|
 </head>
 <script language=javascript>
 if (out == 1.2) {
-  document.writeln('<frameset cols="| . $leftwidth . q|,*" border=0 onLoad="isOK();window._digits.init();">');
-  document.writeln('  <frame name=_picker scrolling=| . $sc . q| marginheight=0 marginwidth=0 src=|. $gen_name . q|?what=|. $what . $jsl . q|>');
-  document.writeln('  <frameset rows="0,85,*" border=0>');
-  document.writeln("  <frame name=_data scrolling=| . $sc . q| marginheight=0 marginwidth=0 src='|. $gen_name . $hex . q|'>");
-  document.writeln("  <frame name=_sample scrolling=| . $sc . q| marginheight=0 marginwidth=0 src='|. $_ . q|'>");
-  document.writeln('  <frame name=_digits scrolling=| . $sc . q| marginheight=0 marginwidth=0 src=|. $gen_name . q|?what=digits|. $jsl . q|>');
-  document.writeln('  </frameset>');
-  document.writeln('</frameset>');
+  document.writeln('<frameset cols="| . $leftwidth . q|,*" border=0 onLoad="isOK();window._digits.init();">\n' +
+                   '  <frame name=_picker scrolling=| . $sc . q| marginheight=0 marginwidth=0 src=|. $gen_name . q|?what=|. $what . $jsl . q|>' +
+                   '  <frameset rows="0,85,*" border=0>' +
+                   "  <frame name=_data scrolling=| . $sc . q| marginheight=0 marginwidth=0 src='|. $gen_name . $hex . q|'>" +
+                   "  <frame name=_sample scrolling=| . $sc . q| marginheight=0 marginwidth=0 src='|. $_ . q|'>" +
+                   '  <frame name=_digits scrolling=| . $sc . q| marginheight=0 marginwidth=0 src=|. $gen_name . q|?what=digits|. $jsl . q|>' +
+                   '  </frameset>' +
+                   '</frameset>');
 } else {
   document.writeln('<body bgcolor="#ffffcc"><center><font size=6 color=red>THIS APPLICATION REQUIRES A<BR>JAVASCRIPT 1.2 COMPLIANT BROWSER</FONT></center></body>');
 }
@@ -638,7 +638,7 @@ href=| . $gref . q|
   return $head . q|<body bgcolor="#ffffff" onLoad="loaded();">
 <table cellspacing=0 cellpadding=0 border=0 width=100%>
 <tr>
-  <tdcolspan=2><font size=1>&nbsp;</font></td></tr>
+  <td colspan=2><font size=1>&nbsp;</font></td></tr>
 <tr align=center valign=middle>
   <td>|. $c24m . q|</td>
   <td>|. $cgrey . q|</td></tr>
@@ -699,6 +699,7 @@ sub cp216_ds {
   $size -= $border;
   
   my $head .= q|<html>
+<head>
 <script language="javascript1.2">
 rgb = new Array(3);
 color = new Array('RED','GREEN','BLUE');
